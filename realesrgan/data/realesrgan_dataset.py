@@ -190,3 +190,4 @@ class RealESRGANDataset(data.Dataset):
 
     def __len__(self):
         return len(self.paths)
+    #这个数据集用于 Real-ESRGAN 的训练，帮助模型学习从低质量图像恢复高质量图像。

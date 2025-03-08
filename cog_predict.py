@@ -146,3 +146,4 @@ def clean_folder(folder):
                 shutil.rmtree(file_path)
         except Exception as e:
             print(f'Failed to delete {file_path}. Reason: {e}')
+#这段代码是一个使用 Real-ESRGAN 和 GFPGAN 模型进行图像超分辨率和面部增强的应用程序，专门用于通过 Cog 框架部署和预测。Cog 是一个用于简化机器学习模型部署的工具。

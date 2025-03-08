@@ -34,3 +34,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args)
+#这段代码的作用是 将 PyTorch 训练好的超分辨率（Super-Resolution）模型 Real-ESRGAN 转换为 ONNX 格式，以便在不同的推理框架（如 TensorRT、ONNX Runtime）上运行。

@@ -47,3 +47,5 @@ if __name__ == '__main__':
             args.root[i] = os.path.dirname(args.input[i])
 
     main(args)
+#这段代码的功能是生成配对图像的元信息（meta info）文件，即创建一个 .txt 文件，记录高质量（GT, Ground Truth）
+#和低质量（LQ, Low Quality）图像的相对路径，用于超分辨率（Super-Resolution）或图像去噪等任务的数据集管理。

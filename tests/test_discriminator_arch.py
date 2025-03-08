@@ -17,3 +17,4 @@ def test_unetdiscriminatorsn():
         net.cuda()
         output = net(img.cuda())
         assert output.shape == (1, 1, 32, 32)
+#这段代码是 测试 UNetDiscriminatorSN 网络结构 的单元测试，主要验证该网络是否能够正确地进行前向传播并返回预期的输出。

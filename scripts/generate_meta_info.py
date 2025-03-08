@@ -56,3 +56,5 @@ if __name__ == '__main__':
     os.makedirs(os.path.dirname(args.meta_info), exist_ok=True)
 
     main(args)
+
+    #这段代码的功能是生成 Ground-Truth 图像的元信息（meta info）文件，即创建一个 txt 文件，记录输入文件夹中的所有图像的相对路径，用于后续数据处理或训练。

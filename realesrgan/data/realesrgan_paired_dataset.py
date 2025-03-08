@@ -106,3 +106,4 @@ class RealESRGANPairedDataset(data.Dataset):
 
     def __len__(self):
         return len(self.paths)
+#用于准备训练数据

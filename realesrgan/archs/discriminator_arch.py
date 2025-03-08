@@ -65,3 +65,4 @@ class UNetDiscriminatorSN(nn.Module):
         out = self.conv9(out)
 
         return out
+    #U-Net 结构的判别器（Discriminator），并使用了 光谱归一化（Spectral Normalization, SN）。

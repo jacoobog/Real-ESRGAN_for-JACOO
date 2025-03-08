@@ -46,3 +46,4 @@ if __name__ == '__main__':
 
     os.makedirs(args.output, exist_ok=True)
     main(args)
+#这段代码的作用是生成多尺度（multi-scale）版本的高质量（GT）图像，并使用 Lanczos 采样方法进行缩放，适用于超分辨率（Super-Resolution）任务的数据预处理。

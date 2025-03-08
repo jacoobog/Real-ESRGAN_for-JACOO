@@ -67,3 +67,4 @@ class SRVGGNetCompact(nn.Module):
         base = F.interpolate(x, scale_factor=self.upscale, mode='nearest')
         out += base
         return out
+#定义了 SRVGGNetCompact，一个 紧凑型 VGG 风格的超分辨率（Super-Resolution, SR）神经网络，用于提高图像的分辨率。

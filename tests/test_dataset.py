@@ -149,3 +149,4 @@ def test_realesrgan_paired_dataset():
     # check shape and contents
     assert result['gt'].shape == (3, 128, 128)
     assert result['lq'].shape == (3, 32, 32)
+#这段代码是 用于测试 RealESRGAN 数据集类（RealESRGANDataset 和 RealESRGANPairedDataset）的单元测试。通过使用 pytest 测试框架，验证数据集类在不同配置和情况下的行为是否符合预期。

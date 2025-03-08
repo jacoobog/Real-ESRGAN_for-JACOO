@@ -133,3 +133,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args)
+#这段代码是一个 多线程图像裁剪工具，用于 将大图像裁剪成小块子图像，以便提高 I/O 速度，适用于训练深度学习模型
