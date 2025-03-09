@@ -11,7 +11,7 @@ from torch.nn import functional as F
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-class RealESRGANer():
+class RealESRGANer(): #该类封装了 Real-ESRGAN 的完整推理流程。
     """A helper class for upsampling images with RealESRGAN.
 
     Args:
@@ -27,16 +27,16 @@ class RealESRGANer():
     """
 
     def __init__(self,
-                 scale,
-                 model_path,
-                 dni_weight=None,
-                 model=None,
-                 tile=0,
-                 tile_pad=10,
-                 pre_pad=10,
-                 half=False,
-                 device=None,
-                 gpu_id=None):
+                 scale, #超分辨率倍数
+                 model_path, #模型路径（可以是本地路径或在线 URL）
+                 dni_weight=None, #DNI（Deep Network Interpolation）权重，用于不同模型的融合。
+                 model=None, #PyTorch 预训练模型。
+                 tile=0, #是否分块处理图像（防止显存溢出）。
+                 tile_pad=10, #分块边缘填充大小。
+                 pre_pad=10, #在输入图像前进行预填充，减少边界伪影。
+                 half=False, #是否使用 FP16（半精度推理），减少显存占用。
+                 device=None, #选择运行设备（cuda 或 cpu）。
+                 gpu_id=None): #指定 GPU 设备 ID。
         self.scale = scale
         self.tile_size = tile
         self.tile_pad = tile_pad
@@ -51,11 +51,11 @@ class RealESRGANer():
         else:
             self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') if device is None else device
 
-        if isinstance(model_path, list):
+        if isinstance(model_path, list):  #加载模型 如果 model_path 是一个列表
             # dni
             assert len(model_path) == len(dni_weight), 'model_path and dni_weight should have the save length.'
             loadnet = self.dni(model_path[0], model_path[1], dni_weight)
-        else:
+        else: #如果 model_path 是 URL
             # if the model_path starts with https, it will first download models to the folder: weights
             if model_path.startswith('https://'):
                 model_path = load_file_from_url(
@@ -63,13 +63,13 @@ class RealESRGANer():
             loadnet = torch.load(model_path, map_location=torch.device('cpu'))
 
         # prefer to use params_ema
-        if 'params_ema' in loadnet:
+        if 'params_ema' in loadnet: #加载权重到模型
             keyname = 'params_ema'
         else:
             keyname = 'params'
         model.load_state_dict(loadnet[keyname], strict=True)
 
-        model.eval()
+        model.eval() #模型推理准备
         self.model = model.to(self.device)
         if self.half:
             self.model = self.model.half()
@@ -110,7 +110,7 @@ class RealESRGANer():
                 self.mod_pad_w = (self.mod_scale - w % self.mod_scale)
             self.img = F.pad(self.img, (0, self.mod_pad_w, 0, self.mod_pad_h), 'reflect')
 
-    def process(self):
+    def process(self): #直接调用模型进行推理。
         # model inference
         self.output = self.model(self.img)
 
@@ -311,3 +311,5 @@ class IOConsumer(threading.Thread):
             save_path = msg['save_path']
             cv2.imwrite(save_path, output)
         print(f'IO worker {self.qid} is done.')
+
+#这段代码主要实现了 Real-ESRGAN（用于超分辨率重建的深度学习模型） 的封装，包括 加载模型、预处理、推理、后处理 以及 多线程 IO 处理。

@@ -256,3 +256,5 @@ class RealESRGANModel(SRGANModel):
             self.model_ema(decay=self.ema_decay)
 
         self.log_dict = self.reduce_loss_dict(loss_dict)
+
+#这段代码是 RealESRGANModel 类的实现，它继承自 SRGANModel，用于训练 Real-ESRGAN（一个用于真实世界图像盲超分辨率的模型）。下面是对代码的逐步解析：

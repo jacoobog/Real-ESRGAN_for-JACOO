@@ -2,26 +2,26 @@ import argparse
 import cv2
 import glob
 import os
-from basicsr.archs.rrdbnet_arch import RRDBNet
+from basicsr.archs.rrdbnet_arch import RRDBNet #Real-ESRGAN 的 RRDBNet 网络结构，用于超分辨率处理。
 from basicsr.utils.download_util import load_file_from_url
 
-from realesrgan import RealESRGANer
-from realesrgan.archs.srvgg_arch import SRVGGNetCompact
+from realesrgan import RealESRGANer  #real_esrgan的核心类
+from realesrgan.archs.srvgg_arch import SRVGGNetCompact #用于动漫与通用模型的轻量化VGG网络
 
 
 def main():
     """Inference demo for Real-ESRGAN.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-i', '--input', type=str, default='inputs', help='Input image or folder')
+    parser.add_argument('-i', '--input', type=str, default='inputs', help='Input image or folder') #输入图片的路径，默认为input目录
     parser.add_argument(
         '-n',
         '--model_name',
         type=str,
         default='RealESRGAN_x4plus',
         help=('Model names: RealESRGAN_x4plus | RealESRNet_x4plus | RealESRGAN_x4plus_anime_6B | RealESRGAN_x2plus | '
-              'realesr-animevideov3 | realesr-general-x4v3'))
-    parser.add_argument('-o', '--output', type=str, default='results', help='Output folder')
+              'realesr-animevideov3 | realesr-general-x4v3')) #选择使用的模型，默认为x4
+    parser.add_argument('-o', '--output', type=str, default='results', help='Output folder')# 输出目录，默认为 results。
     parser.add_argument(
         '-dn',
         '--denoise_strength',
@@ -29,7 +29,7 @@ def main():
         default=0.5,
         help=('Denoise strength. 0 for weak denoise (keep noise), 1 for strong denoise ability. '
               'Only used for the realesr-general-x4v3 model'))
-    parser.add_argument('-s', '--outscale', type=float, default=4, help='The final upsampling scale of the image')
+    parser.add_argument('-s', '--outscale', type=float, default=4, help='The final upsampling scale of the image')#最终的放大倍数，默认为 4。
     parser.add_argument(
         '--model_path', type=str, default=None, help='[Option] Model path. Usually, you do not need to specify it')
     parser.add_argument('--suffix', type=str, default='out', help='Suffix of the restored image')
@@ -52,10 +52,10 @@ def main():
     parser.add_argument(
         '-g', '--gpu-id', type=int, default=None, help='gpu device to use (default=None) can be 0,1,2 for multi-gpu')
 
-    args = parser.parse_args()
+    args = parser.parse_args() #解析用户的命令行输入
 
     # determine models according to model names
-    args.model_name = args.model_name.split('.')[0]
+    args.model_name = args.model_name.split('.')[0]  #这里判断用户选择的模型类型，并根据不同模型 构造神经网络，然后指定对应的 权重文件下载地址。
     if args.model_name == 'RealESRGAN_x4plus':  # x4 RRDBNet model
         model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=4)
         netscale = 4
@@ -85,7 +85,7 @@ def main():
         ]
 
     # determine model paths
-    if args.model_path is not None:
+    if args.model_path is not None:  #确定模型权重路径
         model_path = args.model_path
     else:
         model_path = os.path.join('weights', args.model_name + '.pth')
@@ -104,8 +104,8 @@ def main():
         dni_weight = [args.denoise_strength, 1 - args.denoise_strength]
 
     # restorer
-    upsampler = RealESRGANer(
-        scale=netscale,
+    upsampler = RealESRGANer( #RealESRGANer 是 Real-ESRGAN 的推理类，负责加载模型并执行超分辨率任务。
+        scale=netscale,       #初始化超分辨率推理器
         model_path=model_path,
         dni_weight=dni_weight,
         model=model,
@@ -115,7 +115,7 @@ def main():
         half=not args.fp32,
         gpu_id=args.gpu_id)
 
-    if args.face_enhance:  # Use GFPGAN for face enhancement
+    if args.face_enhance:  # Use GFPGAN for face enhancement  人脸增强
         from gfpgan import GFPGANer
         face_enhancer = GFPGANer(
             model_path='https://github.com/TencentARC/GFPGAN/releases/download/v1.3.0/GFPGANv1.3.pth',
@@ -125,12 +125,12 @@ def main():
             bg_upsampler=upsampler)
     os.makedirs(args.output, exist_ok=True)
 
-    if os.path.isfile(args.input):
+    if os.path.isfile(args.input):   # 处理输入文件
         paths = [args.input]
     else:
         paths = sorted(glob.glob(os.path.join(args.input, '*')))
 
-    for idx, path in enumerate(paths):
+    for idx, path in enumerate(paths):  #逐个处理图片
         imgname, extension = os.path.splitext(os.path.basename(path))
         print('Testing', idx, imgname)
 
@@ -140,7 +140,7 @@ def main():
         else:
             img_mode = None
 
-        try:
+        try:  #进行超分辨率推理
             if args.face_enhance:
                 _, _, output = face_enhancer.enhance(img, has_aligned=False, only_center_face=False, paste_back=True)
             else:
@@ -159,7 +159,7 @@ def main():
                 save_path = os.path.join(args.output, f'{imgname}.{extension}')
             else:
                 save_path = os.path.join(args.output, f'{imgname}_{args.suffix}.{extension}')
-            cv2.imwrite(save_path, output)
+            cv2.imwrite(save_path, output)  #保存处理后的图片
 
 
 if __name__ == '__main__':

@@ -186,3 +186,7 @@ class RealESRNetModel(SRModel):
         self.is_train = False
         super(RealESRNetModel, self).nondist_validation(dataloader, current_iter, tb_logger, save_img)
         self.is_train = True
+# 这段代码实现了 RealESRNet 的核心数据处理逻辑，
+# 它的主要目标是 在训练过程中合成具有不同退化类型
+# 的 LQ 图像，然后训练一个超分辨率模型（RealESRNet）
+# 来复原高质量的图像。它主要用于 图像增强和超分辨率任务，特别适用于 真实世界的低质量图像重建。
